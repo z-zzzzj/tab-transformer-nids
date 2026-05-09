@@ -1,0 +1,61 @@
+project:
+  root_dir: "."
+  raw_data_dir: "data/raw"
+  processed_dir: "ml/data/processed_smoke"
+  reports_dir: "ml/experiments/reports_smoke"
+  artifacts_dir: "artifacts_smoke"
+
+dataset:
+  random_state: 42
+  test_size: 0.15
+  val_size: 0.15
+  split_strategy: "seen_family_no_leak"
+  split_group_column:
+  rare_family_train_only_threshold: 100
+  port_top_k: 16
+  include_source_dataset_feature: false
+  max_rows_per_file: 3000
+  infer_datetime_from_filename: true
+  train_sample_limit:
+  benign_label: "BENIGN"
+  drop_duplicate_rows: true
+  strong_identifier_columns:
+    - "flow_id"
+    - "source_ip"
+    - "destination_ip"
+  categorical_candidates:
+    - "destination_port_bucket"
+    - "is_well_known_port"
+  continuous_exclude:
+    - "target_binary"
+    - "label_original"
+    - "source_file"
+    - "source_dataset"
+    - "row_id"
+
+training:
+  batch_size: 512
+  eval_batch_size: null
+  epochs: 3
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  positive_class_weight:
+  patience: 2
+  decision_threshold: 0.5
+
+tab_transformer:
+  dim: 24
+  depth: 2
+  heads: 4
+  attn_dropout: 0.1
+  ff_dropout: 0.1
+  mlp_hidden_mults: [2, 1]
+
+lstm:
+  hidden_size: 64
+  num_layers: 1
+  dropout: 0.1
+
+replay:
+  default_rate_per_second: 8
+  default_batch_size: 16

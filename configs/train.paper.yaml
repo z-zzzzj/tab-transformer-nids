@@ -1,0 +1,72 @@
+project:
+  root_dir: "."
+  raw_data_dir: "data/raw"
+  processed_dir: "ml/data/processed"
+  reports_dir: "ml/experiments/reports"
+  artifacts_dir: "artifacts"
+
+dataset:
+  random_state: 42
+  test_size: 0.15
+  val_size: 0.15
+  split_strategy: seen_family_no_leak
+  split_group_column: null
+  rare_family_train_only_threshold: 100
+  port_top_k: 64
+  include_source_dataset_feature: false
+  max_rows_per_file: null
+  infer_datetime_from_filename: true
+  train_sample_limit: null
+  benign_label: BENIGN
+  drop_duplicate_rows: true
+  strong_identifier_columns:
+    - flow_id
+    - source_ip
+    - destination_ip
+  categorical_candidates:
+    - destination_port_bucket
+    - is_well_known_port
+  continuous_exclude:
+    - target_binary
+    - label_original
+    - source_file
+    - source_dataset
+    - row_id
+
+training:
+  batch_size: 4096
+  eval_batch_size: 32768
+  epochs: 20
+  learning_rate: 0.0008
+  weight_decay: 0.0001
+  positive_class_weight: null
+  selection_split_name: inner_val
+  threshold_selection_policy: f1_plateau
+  patience: 4
+  decision_threshold: 0.5
+  epoch_selection_metric: f_beta
+  auto_batch_tune:
+    enabled: true
+    gpu_reserve_mb: 1024
+    ram_reserve_mb: 4096
+    max_train_batch_multiplier: 1
+    max_eval_batch_multiplier: 1
+
+tab_transformer:
+  dim: 32
+  depth: 4
+  heads: 8
+  attn_dropout: 0.1
+  ff_dropout: 0.1
+  mlp_hidden_mults:
+    - 4
+    - 2
+
+lstm:
+  hidden_size: 128
+  num_layers: 2
+  dropout: 0.2
+
+replay:
+  default_rate_per_second: 24
+  default_batch_size: 48
