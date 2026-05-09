@@ -70,7 +70,7 @@ class InferenceBundle:
         if self.model_type == "isolation_forest":
             features = np.concatenate([x_categ.astype(np.float32), x_cont], axis=1)
             raw_scores = (-self.model.decision_function(features)).astype(np.float32)
-            confidences = 1.0 / (1.0 + np.exp(-raw_scores))
+            attack_probabilities = 1.0 / (1.0 + np.exp(-raw_scores))
         elif self.model_type == "lstm":
             with torch.no_grad():
                 tensor = torch.tensor(
@@ -79,7 +79,7 @@ class InferenceBundle:
                     device=self.device,
                 )
                 logits = self.model(tensor).squeeze(-1)
-                confidences = torch.sigmoid(logits).cpu().numpy()
+                attack_probabilities = torch.sigmoid(logits).cpu().numpy()
                 raw_scores = logits.cpu().numpy()
         else:
             with torch.no_grad():
@@ -89,12 +89,14 @@ class InferenceBundle:
                 ).squeeze(-1)
                 if self.temperature != 1.0:
                     logits = logits / self.temperature
-                confidences = torch.sigmoid(logits).cpu().numpy()
+                attack_probabilities = torch.sigmoid(logits).cpu().numpy()
                 raw_scores = logits.cpu().numpy()
 
         responses: list[InferenceResponse] = []
-        for index, confidence in enumerate(confidences):
-            prediction = "attack" if float(confidence) >= self.threshold else "benign"
+        for index, attack_probability_value in enumerate(attack_probabilities):
+            attack_probability = float(attack_probability_value)
+            prediction = "attack" if attack_probability >= self.threshold else "benign"
+            display_confidence = attack_probability if prediction == "attack" else 1.0 - attack_probability
             destination_port = None
             if "destination_port" in frame.columns and pd.notna(frame.iloc[index].get("destination_port")):
                 destination_port = int(float(frame.iloc[index]["destination_port"]))
@@ -103,7 +105,8 @@ class InferenceBundle:
                 original_label = None
             response = InferenceResponse(
                 prediction=prediction,
-                confidence=float(confidence),
+                confidence=float(display_confidence),
+                attack_probability=attack_probability,
                 raw_score=float(raw_scores[index]),
                 threshold=float(self.threshold),
                 original_label=original_label,

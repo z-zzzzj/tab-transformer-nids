@@ -40,6 +40,10 @@
 - `scripts/start_frontend.ps1`：启动 Vue + Vite 前端服务。
 - `scripts/run_demo.ps1`：按顺序启动演示链路。
 
+## 数据划分说明
+
+`seen_family_no_leak` 是面向论文实验的 seen-family 划分策略：实现上按 `source_file + label_original` 组织样本组，并在组内按 `row_id` 的连续片段顺序切分训练集、验证集和测试集。同一攻击家族可以同时出现在训练集、验证集和测试集中，但相邻连续片段不会跨集合重叠；该策略不是严格的 family-holdout。
+
 ## 使用流程
 
 ```powershell

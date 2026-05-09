@@ -149,6 +149,7 @@ class ModelRuntime:
         return InferenceResponse(
             prediction=prediction,
             confidence=float(score if prediction == "attack" else 1 - score),
+            attack_probability=float(score),
             raw_score=float(score),
             threshold=float(self.threshold),
             original_label=str(original_label) if original_label is not None else None,
@@ -374,6 +375,7 @@ class ReplayController:
             timestamp=datetime.now(UTC).isoformat().replace("+00:00", "Z"),
             prediction=response.prediction,
             confidence=response.confidence,
+            attack_probability=response.attack_probability,
             severity=severity,
             original_label=response.original_label,
             raw_score=response.raw_score,

@@ -13,6 +13,7 @@ class InferDisplayFields(BaseModel):
 class InferenceResponse(BaseModel):
     prediction: Literal["attack", "benign"]
     confidence: float
+    attack_probability: float | None = None
     raw_score: float
     threshold: float
     original_label: str | None = None
@@ -24,6 +25,7 @@ class AlertEvent(BaseModel):
     timestamp: str
     prediction: Literal["attack", "benign"]
     confidence: float
+    attack_probability: float | None = None
     severity: Literal["info", "warning", "critical"]
     original_label: str | None = None
     raw_score: float

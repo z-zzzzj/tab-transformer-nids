@@ -37,8 +37,8 @@ training:
   batch_size: 4096
   eval_batch_size: 32768
   epochs: 20
-  learning_rate: 0.0008
-  weight_decay: 0.0001
+  learning_rate: 0.00036
+  weight_decay: 0.00015
   positive_class_weight: null
   selection_split_name: inner_val
   threshold_selection_policy: f1_plateau
@@ -53,8 +53,8 @@ training:
     max_eval_batch_multiplier: 1
 
 tab_transformer:
-  dim: 32
-  depth: 4
+  dim: 64
+  depth: 6
   heads: 8
   attn_dropout: 0.1
   ff_dropout: 0.1
